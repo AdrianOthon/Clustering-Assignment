@@ -153,3 +153,10 @@ p2
 drop_idx <- which(res2$est_k < n_shells)
 fail_R <- if (length(drop_idx)) res2$max_radius[min(drop_idx)] else NA
 fail_R
+
+# Task 1 plot (K-means + Gap Statistic)
+dir.create("figures", showWarnings = FALSE)
+ggsave("figures/gap_est_k.png", p, width = 8, height = 5, dpi = 150)
+
+# Task 2 plot (Spectral Clustering)
+ggsave("figures/spectral_est_k.png", p2, width = 8, height = 5, dpi = 150)

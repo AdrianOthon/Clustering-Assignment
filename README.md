@@ -14,27 +14,32 @@ My work runs reproducibly inside a Docker container with a Makefile for automati
 Reproducibility Instructions 
 
 1: Build the docker image
-	docker build -t ufo-assignment 
-
-Username: rstudio
-Password: rstudio 
+	docker build -t ufo-assignment
+ 
+After building the Docker image:
+docker run -it --rm \
+  -v "$(pwd)":/home/rstudio/project \
+  -w /home/rstudio/project \
+  ufo-assignment bash
 
 2. To run the analysis 
-	once inside R studio type "make" (without the quotes)
+	Once in the container mounted to the correct folder type "make clean" followed by "make" on the terminal  (without the quotes)
 
 This will run the complete R script that has both tasks in it. 
 
-3. Clean 
-	type "make clean" (without the quotes) 
 
 ## Output Task 1 
 
-figures/gap_est_k.png is the estimated clusters vs side length for different dimensions for task 1. 
+The estimated number of clusters begins to drop when the side length falls below 3 in higher-dimensional data and 1 with lower-dimensional data. This occurs because as cluster centers move closeer relative to the noise, their distributions overlap. K-mean depends on Euclidean distance and assumes spherical, well-separated clusters, so once overlap occurs, it merges them. The Gap statistic correctly tracks this behavior by showing smaller gaps between real data and a uniform reference, indicating that the structure is no longer distinct. 
 
-The K-means performs well until cluster centers become too close relative to noise resulting in high dimensions failing earlier. 
+Cluster seperatibility determines when K-means fails with higher dimensions magnifying the overlap effects. 
+
+figures/gap_est_k.png is the estimated clusters vs side length for different dimensions for task 1. 
 
 ## Output Task 2 
 
-figures/spectral_est_k.png is the estimated clusters vs max radius for spectral clustering. 
+With d_threshold = 1, spectral clustering begins under detecting shells once the maximum radius falls below 6, where shells start overlapping. The normalized Laplacian's eigenvectors can no longer represent four disconnected components, so K-means groups adjacent shells together. If d_threshold were smaller than 1, edges in the similarity graph would become sparse and clusters would fragment earlier. That can also be stated as "failure at larger radii". If d_threshold were larger than 1, the graph would connect shells too easily resulting in early merging. 
 
-The spectral clustering distinguishes shells effectively until the radii begin overlapping. Meaning, smalled d_threshold causes earlier failure.  
+Ultimately, spectral clusing relies on graph connectivity and its success depend on the spacing between shells and the chosen distance threshold. 
+figures/spectral_est_k.png is the estimated clusters vs max radius for spectral clustering. 
+  
